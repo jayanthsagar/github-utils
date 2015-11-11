@@ -4,7 +4,7 @@ import pprint
 Creation of a token is documented at
 https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 '''
-auth1 = ('jayanthsagar', '06d544cebe0415b47e06666c274ff0c195e45b56')
+auth1 = ('<user-name>', '<access-token>')
 
 def calculate_pages(request):
     for item in request.headers['link'].split(','):
