@@ -1,10 +1,10 @@
 import requests
 import pprint
+from settings import *
 '''
 Creation of a token is documented at
 https://help.github.com/articles/creating-an-access-token-for-command-line-use/
 '''
-auth1 = ('<user-name>', '<access-token>')
 
 def calculate_pages(request):
     for item in request.headers['link'].split(','):
@@ -15,6 +15,8 @@ def calculate_pages(request):
             return int(item.split(';')[0][start:end].split('=')[1])
 
 
+"""get_all_issues_of_organization will list down all the issues of all
+ repos of an organization """
 
 def get_all_issues_of_organization(request):
     global result
@@ -22,7 +24,7 @@ def get_all_issues_of_organization(request):
         url = "https://api.github.com/orgs/Virtual-Labs/issues?filter=all&state=all"
 #       Sending request to list all the issues under Virtual-Labs organization
         request = requests.get(url, auth=auth1)
-        print "Number of pages: ", calculate_pages(request)
+#        print "Number of pages: ", calculate_pages(request)
         result = request.json()
         url = request.links['next']['url']
         new_request = requests.get(url, auth=auth1)
@@ -42,22 +44,38 @@ def get_all_issues_of_organization(request):
             get_all_issues_of_organization(new_request)
 
 
-def print_all_issues():
+def get_all_issues():
         for issue in result:
             print "\n issue URL:"+issue['url']
             for label in issue['labels']:
                     print "label name:"+label['name']
 
-def print_only_issues_with_lables():
+def get_only_issues_with_lables():
         for issue in result:
             if issue['labels'] == []:
                 pass
             else:
-                print "\n issue URL:"+issue['url']
-                for label in issue['labels']:
+                re = filter_issues(issue['labels'],filter_labels)
+                if re == True:
+                    print "\n issue URL:"+issue['url']
+                    for label in issue['labels']:
                         print "label name:"+label['name']
 
 
+"""filter_issues function filters issues based on labels(filter_labels) passed
+as a list.This function gets lables names from a single issue and form a
+ list(label_names),later label_names is converted into a set and filter_labels
+ is also converted into a set,If comparision of both the sets fetch a set of
+ filter_lables, then the search is True else False     """
+
+def filter_issues(labels, filter_labels):
+    label_names =[]
+    for label in labels:
+        label_names.append(label['name'])
+    if set(filter_labels).intersection(set(label_names)) == set(filter_labels):
+        return True
+    else:
+        return False
 
 def get_issues_for_each_repo(repos):
     for repo in repos:
@@ -70,27 +88,6 @@ def get_issues_for_each_repo(repos):
             pass
         else:
             pprint.pprint(result)
-
-
-
-def filter_lables(issues, labels):
-    for issue in issues:
-        if issue['labels'] == []:
-            pass
-        else:
-            print "\n issue URL:"+issue['url']
-            for label in issue['labels']:
-                print "label name:"+label['name']
-#                    print "Issue description:"issue['body']
-
-#                    pprint.pprint(issue)
-
-#        for lable in result:
-#            print lable
-#        if lable == result['lables']['name']:
-#            print 'found'
-#        else:
-#            print 'not found'
 
 def get_repos(get_object):
     global repos
@@ -113,8 +110,9 @@ def get_repos(get_object):
 if __name__ == '__main__':
   result = []
   get_all_issues_of_organization(None)
-  print_all_issues()
-  print_only_issues_with_lables()
+  filter_labels=['help wanted']
+#  get_all_issues()
+  get_only_issues_with_lables()
 
 #  repos = []
 #  get_repos(None)
