@@ -44,7 +44,7 @@ def get_all_issues_of_organization(request):
             get_all_issues_of_organization(new_request)
 
 
-def get_all_issues():
+def print_all_issues():
         for issue in result:
             print "\n issue URL:"+issue['url']
             for label in issue['labels']:
@@ -111,7 +111,7 @@ if __name__ == '__main__':
   result = []
   get_all_issues_of_organization(None)
   filter_labels=['help wanted']
-#  get_all_issues()
+#  print_all_issues()
   get_only_issues_with_lables()
 
 #  repos = []
