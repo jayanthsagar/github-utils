@@ -1,2 +1,1 @@
-# github_utils
-All the utilities using API published by github API
+This script will filter issues of an Organization using github API.
