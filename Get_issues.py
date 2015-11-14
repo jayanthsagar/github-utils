@@ -35,6 +35,7 @@ class Get_issues:
             request = requests.get(url, auth=auth1)
     #        print "Number of pages: ", calculate_pages(request)
             result = request.json()
+            print result
             if 'last' not in request.links.keys():
                 return
             else:
